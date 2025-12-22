@@ -70,7 +70,7 @@ pipeline {
                         echo Java Version:
                         java -version
                         echo.
-                        echo Java Home: ${JAVA_HOME}
+                        echo Java Home: ${env.JAVA_HOME}
                         echo.
                         echo Maven Version:
                         mvn -version
@@ -96,7 +96,7 @@ pipeline {
                         mvn clean package -DskipTests
                         echo.
                         echo Build completed successfully!
-                        echo JAR file location: target\\${APP_NAME}-*.jar
+                        echo JAR file location: target\\${env.APP_NAME}-*.jar
                     """
                 }
             }
@@ -126,12 +126,12 @@ pipeline {
                     // This ensures the Dockerfile is correct and the image can be built
                     bat """
                         echo Building Docker image to validate Dockerfile...
-                        docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} .
-                        docker build -t ${DOCKER_IMAGE_NAME}:latest .
+                        docker build -t ${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG} .
+                        docker build -t ${env.DOCKER_IMAGE_NAME}:latest .
                         echo.
                         echo Docker image built successfully!
-                        echo Image: ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}
-                        echo Image: ${DOCKER_IMAGE_NAME}:latest
+                        echo Image: ${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG}
+                        echo Image: ${env.DOCKER_IMAGE_NAME}:latest
                     """
                 }
             }
@@ -142,10 +142,10 @@ pipeline {
                         // Display Docker image information
                         bat """
                             echo Docker image information:
-                            docker images ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}
+                            docker images ${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG}
                             echo.
                             echo Docker image size:
-                            docker images ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} --format "{{.Size}}"
+                            docker images ${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG} --format "{{.Size}}"
                         """
                         echo "✓ Docker image validation completed"
                     }
