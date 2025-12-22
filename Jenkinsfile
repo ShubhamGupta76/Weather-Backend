@@ -123,6 +123,25 @@ pipeline {
                 }
                 
                 script {
+                    // Check if Docker is available before building
+                    echo "Checking Docker availability..."
+                    bat """
+                        @echo off
+                        docker --version >nul 2>&1
+                        if errorlevel 1 (
+                            echo.
+                            echo ========================================
+                            echo ERROR: Docker is not running!
+                            echo ========================================
+                            echo Please start Docker Desktop and ensure the Docker daemon is running.
+                            echo Then re-run this build.
+                            echo ========================================
+                            exit /b 1
+                        )
+                        echo Docker is available and running.
+                        echo.
+                    """
+                    
                     // Build Docker image to validate Dockerfile
                     // This ensures the Dockerfile is correct and the image can be built
                     bat """
