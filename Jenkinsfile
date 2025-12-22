@@ -145,13 +145,34 @@ pipeline {
                     // Build Docker image to validate Dockerfile
                     // This ensures the Dockerfile is correct and the image can be built
                     bat """
+                        @echo off
                         echo Building Docker image to validate Dockerfile...
-                        docker build -t ${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG} .
-                        docker build -t ${env.DOCKER_IMAGE_NAME}:latest .
                         echo.
+                        docker build -t ${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG} .
+                        if errorlevel 1 (
+                            echo.
+                            echo ========================================
+                            echo ERROR: Docker build failed!
+                            echo ========================================
+                            echo Please check the Dockerfile and build context.
+                            echo ========================================
+                            exit /b 1
+                        )
+                        echo.
+                        echo First build successful. Building latest tag...
+                        docker build -t ${env.DOCKER_IMAGE_NAME}:latest .
+                        if errorlevel 1 (
+                            echo.
+                            echo WARNING: Latest tag build failed, but versioned tag succeeded.
+                            exit /b 1
+                        )
+                        echo.
+                        echo ========================================
                         echo Docker image built successfully!
+                        echo ========================================
                         echo Image: ${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG}
                         echo Image: ${env.DOCKER_IMAGE_NAME}:latest
+                        echo ========================================
                     """
                 }
             }
