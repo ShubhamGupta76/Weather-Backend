@@ -10,10 +10,10 @@ pipeline {
         
         // Java and Maven configuration
         JAVA_HOME = tool name: 'JDK-17', type: 'jdk'
-        PATH = "${JAVA_HOME}/bin:${env.PATH}"
+        PATH = "${JAVA_HOME}/bin;${env.PATH}"
         
-        // Maven settings
-        MAVEN_OPTS = '-Xmx1024m -XX:MaxPermSize=256m'
+        // Maven settings (MaxPermSize removed - not supported in Java 8+)
+        MAVEN_OPTS = '-Xmx1024m'
     }
 
     // Pipeline options
@@ -66,11 +66,12 @@ pipeline {
                 
                 script {
                     // Verify Java version
+                    def javaHome = env.JAVA_HOME ?: 'Not configured (using system Java)'
                     bat """
                         echo Java Version:
                         java -version
                         echo.
-                        echo Java Home: ${env.JAVA_HOME}
+                        echo Java Home: ${javaHome}
                         echo.
                         echo Maven Version:
                         mvn -version
