@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.weather.app.weather_App.Model.WeatherResponse;
+import com.weather.app.weather_App.Model.ForecastResponse;
 
 @Service
 public class WeatherService {
@@ -25,6 +26,16 @@ public class WeatherService {
 
         ResponseEntity<WeatherResponse> response =
                 restTemplate.getForEntity(url, WeatherResponse.class);
+
+        return response.getBody();
+    }
+
+    public ForecastResponse getForecast(String city) {
+        String url = "https://api.openweathermap.org/data/2.5/forecast?q="
+                     + city + "&appid=" + apiKey + "&units=metric";
+
+        ResponseEntity<ForecastResponse> response =
+                restTemplate.getForEntity(url, ForecastResponse.class);
 
         return response.getBody();
     }
