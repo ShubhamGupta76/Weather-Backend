@@ -46,12 +46,11 @@ pipeline {
                 
                 script {
                     // Display repository information
-                    sh '''
-                        echo "Repository: ${GIT_URL:-N/A}"
-                        echo "Branch: ${GIT_BRANCH:-N/A}"
-                        echo "Commit: ${GIT_COMMIT:-N/A}"
-                        echo "Commit Message: ${GIT_COMMIT_MESSAGE:-N/A}"
-                    '''
+                    bat """
+                        echo Repository: ${env.GIT_URL ?: 'N/A'}
+                        echo Branch: ${env.GIT_BRANCH ?: 'N/A'}
+                        echo Commit: ${env.GIT_COMMIT ?: 'N/A'}
+                    """
                 }
             }
         }
@@ -67,15 +66,15 @@ pipeline {
                 
                 script {
                     // Verify Java version
-                    sh '''
-                        echo "Java Version:"
+                    bat """
+                        echo Java Version:
                         java -version
-                        echo ""
-                        echo "Java Home: ${JAVA_HOME}"
-                        echo ""
-                        echo "Maven Version:"
+                        echo.
+                        echo Java Home: ${JAVA_HOME}
+                        echo.
+                        echo Maven Version:
                         mvn -version
-                    '''
+                    """
                 }
             }
         }
@@ -92,13 +91,13 @@ pipeline {
                 script {
                     // Clean, compile, and package the application
                     // Tests are skipped as per requirements
-                    sh '''
-                        echo "Starting Maven build..."
+                    bat """
+                        echo Starting Maven build...
                         mvn clean package -DskipTests
-                        echo ""
-                        echo "Build completed successfully!"
-                        echo "JAR file location: target/${APP_NAME}-*.jar"
-                    '''
+                        echo.
+                        echo Build completed successfully!
+                        echo JAR file location: target\\${APP_NAME}-*.jar
+                    """
                 }
             }
             
@@ -125,15 +124,15 @@ pipeline {
                 script {
                     // Build Docker image to validate Dockerfile
                     // This ensures the Dockerfile is correct and the image can be built
-                    sh '''
-                        echo "Building Docker image to validate Dockerfile..."
+                    bat """
+                        echo Building Docker image to validate Dockerfile...
                         docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} .
                         docker build -t ${DOCKER_IMAGE_NAME}:latest .
-                        echo ""
-                        echo "Docker image built successfully!"
-                        echo "Image: ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
-                        echo "Image: ${DOCKER_IMAGE_NAME}:latest"
-                    '''
+                        echo.
+                        echo Docker image built successfully!
+                        echo Image: ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}
+                        echo Image: ${DOCKER_IMAGE_NAME}:latest
+                    """
                 }
             }
             
@@ -141,13 +140,13 @@ pipeline {
                 success {
                     script {
                         // Display Docker image information
-                        sh '''
-                            echo "Docker image information:"
+                        bat """
+                            echo Docker image information:
                             docker images ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}
-                            echo ""
-                            echo "Docker image size:"
+                            echo.
+                            echo Docker image size:
                             docker images ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} --format "{{.Size}}"
-                        '''
+                        """
                         echo "✓ Docker image validation completed"
                     }
                 }
