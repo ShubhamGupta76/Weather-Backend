@@ -152,11 +152,7 @@ pipeline {
                     }
                 }
                 always {
-                    script {
-                        // Clean up Docker images to save disk space (optional)
-                        // Uncomment if you want to remove images after validation
-                        // sh 'docker rmi ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} || true'
-                    }
+                    echo "Docker build stage completed"
                 }
             }
         }
@@ -198,9 +194,6 @@ pipeline {
                 echo '========================================'
                 echo "Duration: ${currentBuild.durationString}"
             }
-            
-            // Clean workspace (optional - uncomment if needed)
-            // cleanWs()
         }
     }
 }
