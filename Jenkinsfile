@@ -123,22 +123,41 @@ pipeline {
                 }
                 
                 script {
-                    // Check if Docker is available before building
-                    echo "Checking Docker availability..."
+                    // Check if Docker is available and daemon is running
+                    echo "Checking Docker availability and daemon status..."
                     bat """
                         @echo off
+                        echo Checking Docker CLI installation...
                         docker --version >nul 2>&1
                         if errorlevel 1 (
                             echo.
                             echo ========================================
-                            echo ERROR: Docker is not running!
+                            echo ERROR: Docker CLI is not installed!
                             echo ========================================
-                            echo Please start Docker Desktop and ensure the Docker daemon is running.
-                            echo Then re-run this build.
+                            echo Please install Docker Desktop.
                             echo ========================================
                             exit /b 1
                         )
-                        echo Docker is available and running.
+                        echo Docker CLI found.
+                        echo.
+                        echo Checking Docker daemon connection...
+                        docker ps >nul 2>&1
+                        if errorlevel 1 (
+                            echo.
+                            echo ========================================
+                            echo ERROR: Docker daemon is not running!
+                            echo ========================================
+                            echo Docker CLI is installed but the daemon is not accessible.
+                            echo.
+                            echo SOLUTION:
+                            echo 1. Start Docker Desktop application
+                            echo 2. Wait until Docker Desktop shows "Docker Desktop is running"
+                            echo 3. Verify by running: docker ps
+                            echo 4. Then re-run this Jenkins build
+                            echo ========================================
+                            exit /b 1
+                        )
+                        echo Docker daemon is running and accessible.
                         echo.
                     """
                     
